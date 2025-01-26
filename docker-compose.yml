@@ -41,6 +41,7 @@ services:
     dns: 172.30.0.2
     ports:
       - "11025:25"
+      - "11587:587"
       - "11110:110"
     volumes:
       - ./docker-data/server-2/mail-data/:/var/mail/
