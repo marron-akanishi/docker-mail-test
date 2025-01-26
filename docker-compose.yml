@@ -1,0 +1,68 @@
+services:
+  mailserver-dns:
+    build: ./dns
+    container_name: mailserver-dns
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./dns/dnsmasq.conf:/etc/dnsmasq.conf:ro
+    networks:
+      mail_network:
+        ipv4_address: 172.30.0.2
+  mailserver-1:
+    image: ghcr.io/docker-mailserver/docker-mailserver:latest
+    container_name: mailserver-1
+    domainname: mailserver-1
+    dns: 172.30.0.2
+    ports:
+      - "10025:25"
+      - "10587:587"
+      - "10110:110"
+    volumes:
+      - ./docker-data/server-1/mail-data/:/var/mail/
+      - ./docker-data/server-1/mail-state/:/var/mail-state/
+      - ./docker-data/server-1/mail-logs/:/var/log/mail/
+      - ./docker-data/server-1/config/:/tmp/docker-mailserver/
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - ENABLE_POP3=1
+      - SSL_TYPE=
+      - ENABLE_AMAVIS=0
+    restart: always
+    depends_on:
+      - mailserver-dns
+    networks:
+      mail_network:
+        ipv4_address: 172.30.0.3
+  mailserver-2:
+    image: ghcr.io/docker-mailserver/docker-mailserver:latest
+    container_name: mailserver-2
+    domainname: mailserver-2
+    dns: 172.30.0.2
+    ports:
+      - "11025:25"
+      - "11110:110"
+    volumes:
+      - ./docker-data/server-2/mail-data/:/var/mail/
+      - ./docker-data/server-2/mail-state/:/var/mail-state/
+      - ./docker-data/server-2/mail-logs/:/var/log/mail/
+      - ./docker-data/server-2/config/:/tmp/docker-mailserver/
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - ENABLE_POP3=1
+      - SSL_TYPE=
+      - ENABLE_AMAVIS=0
+    restart: always
+    depends_on:
+      - mailserver-dns
+    networks:
+      mail_network:
+        ipv4_address: 172.30.0.4
+
+networks:
+  mail_network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.30.0.0/24

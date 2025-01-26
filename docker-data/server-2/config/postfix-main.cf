@@ -1,0 +1,3 @@
+#inet_interfaces = all
+#smtp_sasl_auth_enable = yes
+smtpd_sasl_auth_enable = yes

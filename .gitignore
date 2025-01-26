@@ -1,0 +1,10 @@
+docker-data/server-1/*
+docker-data/server-2/*
+!docker-data/server-1/config/
+!docker-data/server-2/config/
+docker-data/server-1/config/*
+docker-data/server-2/config/*
+!docker-data/server-1/config/dovecot.cf
+!docker-data/server-1/config/postfix-main.cf
+!docker-data/server-2/config/dovecot.cf
+!docker-data/server-2/config/postfix-main.cf
